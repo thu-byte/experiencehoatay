@@ -55,9 +55,16 @@ body{
   z-index:0;
   overflow:hidden;
   background:#141210;
+  /* Poster shows instantly — covers the case where the video can't autoplay
+     (iOS Low Power Mode, Android Data Saver, etc.) so the page never looks blank. */
+  background-image:url("poster.jpg");
+  background-size:cover;
+  background-position:center;
 }
 
 .video-wrap video{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
@@ -180,10 +187,22 @@ body{
 }
 
 @media (max-width:600px){
-  .content{padding:40px 22px 32px;gap:36px}
-  .divider{height:42px;margin-bottom:24px}
-  .tagline{font-size:12px;letter-spacing:0.28em}
-  .contact a{font-size:19px}
+  .content{padding:44px 24px 36px;gap:32px}
+  .wordmark{font-size:clamp(34px,11vw,46px);letter-spacing:0.18em}
+  .tagline{margin-top:14px;font-size:11px;letter-spacing:0.26em}
+  .divider{height:40px;margin-bottom:22px}
+  .notice{font-size:clamp(21px,6vw,26px);line-height:1.4}
+  .message{max-width:92%}
+  .contact{margin-top:32px;font-size:13px}
+  .contact a{font-size:20px;padding:4px 2px 6px}
+  .footer{font-size:9px;letter-spacing:0.3em}
+}
+
+/* Very short landscape phones — keep everything on one screen. */
+@media (max-height:480px) and (orientation:landscape){
+  .content{padding:24px 24px 18px;gap:16px}
+  .divider{height:24px;margin-bottom:14px}
+  .contact{margin-top:18px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -195,7 +214,10 @@ body{
 <div class="stage">
 
   <div class="video-wrap" aria-hidden="true">
-    <video id="hero" autoplay muted loop playsinline preload="auto">
+    <video id="hero" autoplay muted loop playsinline webkit-playsinline
+           preload="auto" poster="poster.jpg" disablepictureinpicture
+           disableremoteplayback x5-playsinline>
+      <source src="hero-video-mobile.mp4" type="video/mp4" media="(max-width:768px)">
       <source src="hero-video.mp4" type="video/mp4">
     </video>
   </div>
@@ -225,13 +247,50 @@ body{
 </div>
 
 <script>
-  // Fade video in once it can play, so first paint is clean on slow networks.
+  // Fade video in once it can play, and work hard to autoplay on mobile.
+  // If the browser blocks autoplay (iOS Low Power Mode, Data Saver, etc.),
+  // the CSS poster image stays visible so the page never looks broken, and
+  // we retry playback on the first user interaction.
   (function(){
     var v = document.getElementById('hero');
     if(!v) return;
+
     function ready(){ v.classList.add('ready'); }
+
+    function tryPlay(){
+      var p = v.play();
+      if(p && typeof p.then === 'function'){
+        p.then(ready).catch(function(){
+          // Autoplay blocked — poster remains; wait for a user gesture.
+        });
+      } else {
+        ready();
+      }
+    }
+
+    // Reveal as soon as there are enough frames.
     if(v.readyState >= 3){ ready(); }
     else { v.addEventListener('canplay', ready, { once:true }); }
+
+    // Attempt immediate playback.
+    if(v.readyState >= 2){ tryPlay(); }
+    else { v.addEventListener('loadeddata', tryPlay, { once:true }); }
+
+    // Fallback: first interaction kicks off playback on restrictive mobile browsers.
+    var kick = function(){
+      tryPlay();
+      ['touchstart','click','scroll'].forEach(function(ev){
+        window.removeEventListener(ev, kick);
+      });
+    };
+    ['touchstart','click','scroll'].forEach(function(ev){
+      window.addEventListener(ev, kick, { passive:true });
+    });
+
+    // Re-attempt when the tab becomes visible again (e.g. returning to the page).
+    document.addEventListener('visibilitychange', function(){
+      if(!document.hidden){ tryPlay(); }
+    });
   })();
 </script>
 </body>
