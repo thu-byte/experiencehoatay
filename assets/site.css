@@ -2094,3 +2094,74 @@ footer{
 @media (max-width: 600px){
   .nav-links{ display:none !important; }
 }
+
+
+/* ============================================================
+   REFINEMENTS v2 — captions, hw icons, founder, hotel scroll, type
+   ============================================================ */
+
+/* ── Fairmont image captions (scoped to .has-cap rows) ── */
+.img-row.has-cap{ align-items:flex-start; }
+.img-row.has-cap > .isf{ display:flex; flex-direction:column; gap:12px; margin:0; min-width:0; }
+.img-row.has-cap > .isf > .is{ width:100%; flex:0 0 auto !important; }
+.img-row.r-pl.has-cap > .isf:first-child{ flex:0 0 37%; }
+.img-row.r-pl.has-cap > .isf:last-child{ flex:1 1 0; }
+.img-row.r-pp-u.has-cap > .isf:first-child{ flex:0 0 55%; }
+.img-row.r-pp-u.has-cap > .isf:last-child{ flex:1 1 0; }
+.img-cap{
+  font-family:var(--body);
+  font-size:12px; letter-spacing:0.06em; line-height:1.5;
+  color:var(--stone);
+}
+
+/* ── How we work — step icons ── */
+.hw-icon{ display:block; color:var(--gold); margin-bottom:8px; }
+.hw-icon svg{ width:30px; height:30px; display:block; }
+
+/* ── About — founder name at the top of the hero ── */
+.about-founder{
+  font-family:var(--display);
+  font-size:clamp(22px,2.4vw,30px); font-weight:400;
+  color:var(--ink); line-height:1.25; margin-top:26px;
+}
+.about-founder span{
+  display:block; margin-top:10px;
+  font-family:var(--body); font-size:12px; letter-spacing:0.18em;
+  text-transform:uppercase; color:var(--gold-deep);
+}
+
+/* ── Selected hotels → horizontal swipe strip on phones/tablets ── */
+@media (max-width: 900px){
+  .hotel-grid{
+    display:flex !important;
+    grid-template-columns:none !important;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:16px !important;
+    padding:0 24px 36px !important;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scroll-padding-left:24px;
+  }
+  .hotel-grid::-webkit-scrollbar{ height:0; display:none; }
+  .hotel-card{
+    flex:0 0 78% !important;
+    max-width:78% !important;
+    scroll-snap-align:start;
+  }
+}
+
+/* ── Overall readability — bump small body copy + fix caption stacking on phones ── */
+@media (max-width: 768px){
+  body{ line-height:1.75; }
+  .hw-step p{ font-size:15px !important; line-height:1.8; }
+  .step-text{ font-size:15px !important; }
+  .step-intro-text{ font-size:15.5px !important; }
+  .hotels-intro{ font-size:15.5px !important; }
+  .project-detail{ font-size:14px !important; }
+  .about-copy, .tours-body{ font-size:16.5px !important; }
+  .essay-sidebar-item span{ font-size:14px !important; }
+  .img-cap{ font-size:13px !important; }
+  /* stacked image rows: each captioned figure full-width */
+  .img-row.has-cap > .isf{ flex:0 0 auto !important; width:100% !important; }
+}
