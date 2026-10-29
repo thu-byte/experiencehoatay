@@ -62,65 +62,10 @@
         </p>
       </div>
 
-      <!-- Artist submission form -->
+      <!-- Submit your work — opens a pre-drafted email -->
       <div class="reveal d2" style="max-width:720px">
-        <form class="hoatay-form" data-form="artist"
-              data-subject-template="[Artist submission] {name} — {discipline}"
-              data-success="Thank you. We've received your note and will be in touch when a project calls for your work.">
-          <div class="form-fields">
-            <div class="field-row">
-              <div class="field">
-                <label for="a-name">Name <span class="req">*</span> <span class="vi">· Họ tên</span></label>
-                <input id="a-name" name="name" type="text" autocomplete="name" required>
-              </div>
-              <div class="field">
-                <label for="a-studio">Studio / workshop <span class="vi">· Xưởng</span></label>
-                <input id="a-studio" name="studio" type="text" autocomplete="organization">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="a-email">Email <span class="req">*</span></label>
-                <input id="a-email" name="email" type="email" autocomplete="email" required>
-              </div>
-              <div class="field">
-                <label for="a-phone">Phone / WhatsApp / Zalo <span class="vi">· Số điện thoại</span></label>
-                <input id="a-phone" name="phone" type="text" autocomplete="tel">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="a-city">City <span class="req">*</span> <span class="vi">· Thành phố</span></label>
-                <input id="a-city" name="city" type="text" autocomplete="address-level2" required>
-              </div>
-              <div class="field">
-                <label for="a-discipline">Discipline <span class="vi">· Loại hình</span></label>
-                <input id="a-discipline" name="discipline" type="text" placeholder="e.g. lacquer, painting, textile, ceramics">
-              </div>
-            </div>
-            <div class="field">
-              <label for="a-portfolio">Portfolio link <span class="req">*</span> <span class="vi">· Đường dẫn portfolio</span></label>
-              <input id="a-portfolio" name="portfolio" type="url" placeholder="https://" required>
-            </div>
-            <div class="field">
-              <label for="a-about">About your work <span class="vi">· Về tác phẩm của bạn</span></label>
-              <textarea id="a-about" name="about"></textarea>
-            </div>
-            <p class="form-note">Links only, please — no file uploads. Share a website, Instagram or Drive/Dropbox link. <span class="vi">· Chỉ gửi đường dẫn, không tải tệp.</span></p>
-            <div class="consent">
-              <input id="a-consent" name="consent" type="checkbox" value="yes" required>
-              <label for="a-consent">I agree to HOATAY keeping these details to consider my work for future projects. <span class="req">*</span> <span class="vi">· Tôi đồng ý để HOATAY lưu thông tin này.</span></label>
-            </div>
-            <div class="hp" aria-hidden="true">
-              <label>Leave this field empty<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
-            </div>
-            <input type="hidden" name="_subject" value="[Artist submission]">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
-            <button type="submit">Send submission</button>
-          </div>
-          <p class="form-status" role="status" aria-live="polite"></p>
-        </form>
+        <p class="form-note" style="margin-bottom:28px">Links only, please — no file uploads. Share a website, Instagram or Drive/Dropbox link in your email. <span class="vi">· Chỉ gửi đường dẫn, không tải tệp.</span></p>
+        <a class="btn-credentials" href="mailto:studio@experiencehoatay.com?subject=Artist%20submission&amp;body=Hello%20HOATAY%2C%0D%0A%0D%0AI%27d%20like%20to%20share%20my%20work.%0D%0A%0D%0AName%3A%0D%0AStudio%20%2F%20workshop%3A%0D%0ACity%3A%0D%0ADiscipline%20(e.g.%20lacquer%2C%20painting%2C%20textile)%3A%0D%0APhone%20%2F%20WhatsApp%20%2F%20Zalo%3A%0D%0APortfolio%20link%3A%0D%0AAbout%20my%20work%3A%0D%0A%0D%0AThank%20you.">Submit your work</a>
       </div>
 
     </div>
