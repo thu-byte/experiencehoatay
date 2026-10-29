@@ -1421,9 +1421,9 @@ footer{
   background-repeat:no-repeat;
 }
 .art-cm-05{
-  background-image:url("/assets/img/0e19ce5744.jpg");
+  background-image:url("/assets/img/about-install-05.jpg");
   background-size:cover;
-  background-position:42% 32%;
+  background-position:center 34%;
   background-repeat:no-repeat;
 }
 .art-br1{
@@ -2197,4 +2197,92 @@ dialog.hoatay-modal::backdrop{
   .credentials-cta{padding:72px 24px}
   .hoatay-modal-inner{padding:44px 24px 36px}
   .hoatay-form .field-row{grid-template-columns:1fr;gap:0}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE HAMBURGER MENU  (injected by site.js on every page)
+   Shows where the inline nav-links are hidden (≤600px); the menu
+   overlay carries the same navigation.
+   ════════════════════════════════════════════════════════════════ */
+.nav-burger{
+  display:none;
+  flex-direction:column;justify-content:center;align-items:center;gap:5px;
+  width:34px;height:34px;padding:0;margin:0;
+  background:transparent;border:none;cursor:pointer;
+  position:relative;z-index:220;
+}
+.nav-burger span{
+  display:block;width:24px;height:1.5px;background:var(--ink);
+  transition:transform 0.4s var(--ease), opacity 0.25s;
+}
+.nav-burger.is-open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.is-open span:nth-child(2){opacity:0}
+.nav-burger.is-open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+.mobile-menu{
+  position:fixed;top:0;left:0;right:0;z-index:210;
+  background:rgba(248,246,243,0.98);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:0.5px solid var(--mist);
+  padding:96px 28px 36px;
+  transform:translateY(-102%);opacity:0;visibility:hidden;
+  transition:transform 0.55s var(--ease), opacity 0.4s, visibility 0.4s;
+}
+.mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible}
+.mobile-menu ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.mobile-menu li{border-top:0.5px solid var(--mist)}
+.mobile-menu li:last-child{border-bottom:0.5px solid var(--mist)}
+.mobile-menu a{
+  display:block;padding:20px 2px;text-decoration:none;
+  font-family:var(--display);font-size:22px;font-weight:300;letter-spacing:0.02em;
+  color:var(--ink);transition:color 0.3s;
+}
+.mobile-menu a:active,.mobile-menu a:focus{color:var(--gold-deep)}
+body.menu-open{overflow:hidden}
+
+@media (max-width:600px){
+  .nav-burger{display:flex}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HOTEL CARDS — horizontal scroll on mobile
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width:768px){
+  .hotel-grid{
+    display:flex !important;
+    grid-template-columns:none !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scroll-padding-left:24px;
+    gap:16px !important;
+    padding:0 24px 48px !important;
+    scrollbar-width:none;
+  }
+  .hotel-grid::-webkit-scrollbar{display:none}
+  .hotel-card{
+    flex:0 0 78% !important;
+    width:78% !important;max-width:78% !important;
+    justify-self:auto !important;
+    scroll-snap-align:start;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FAIRMONT COMMISSION — photo captions (overlay with scrim)
+   ════════════════════════════════════════════════════════════════ */
+.img-row .is{position:relative}
+.photo-cap{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  margin:0;padding:34px 16px 13px;
+  font-family:var(--body);
+  font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;
+  line-height:1.55;color:rgba(255,255,255,0.96);
+  background:linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.30) 45%, rgba(0,0,0,0) 100%);
+  text-shadow:0 1px 10px rgba(0,0,0,0.7);
+  pointer-events:none;
+}
+@media (max-width:768px){
+  .photo-cap{font-size:10px;padding:28px 14px 11px}
 }

@@ -634,3 +634,102 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     wireForm(form);
   });
 })();
+
+/* ════════════════════════════════════════════════════════════════
+   HERO VIDEO — force autoplay on mobile
+   ════════════════════════════════════════════════════════════════
+   iOS Safari and some Android browsers ignore the `autoplay` attribute
+   unless the element is muted via the PROPERTY (not just the attribute)
+   and play() is invoked from script. If the first play() is still
+   blocked, we retry on the first user interaction. */
+(function(){
+  const video = document.querySelector('.hero-media video');
+  if(!video) return;
+
+  // Belt-and-braces: make the element eligible for inline muted autoplay.
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute('muted','');
+  video.playsInline = true;
+  video.setAttribute('playsinline','');
+  video.setAttribute('webkit-playsinline','');
+
+  function tryPlay(){
+    const p = video.play();
+    if(p && typeof p.catch === 'function') p.catch(()=>{});
+  }
+
+  tryPlay();
+  video.addEventListener('loadeddata', tryPlay, { once:true });
+  video.addEventListener('canplay', tryPlay, { once:true });
+
+  // If autoplay was still refused, start on the first interaction, then clean up.
+  function kick(){
+    tryPlay();
+    if(!video.paused){
+      ['touchstart','pointerdown','click','scroll'].forEach(ev=>
+        document.removeEventListener(ev, kick, { passive:true }));
+    }
+  }
+  ['touchstart','pointerdown','click','scroll'].forEach(ev=>
+    document.addEventListener(ev, kick, { passive:true }));
+
+  // Resume when the tab/app comes back into focus.
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tryPlay(); });
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE HAMBURGER MENU
+   ════════════════════════════════════════════════════════════════
+   The inline nav-links are hidden on phones (CSS). This injects a
+   hamburger button and a dropdown menu with the full navigation, on
+   every page, so mobile visitors can move around the site. */
+(function(){
+  const nav = document.getElementById('nav');
+  if(!nav) return;
+
+  const ITEMS = [
+    { href:'/',        label:'Home' },
+    { href:'/hotels/', label:'Services' },
+    { href:'/about/',  label:'About' },
+    { href:'/essays/', label:'Essays' }
+  ];
+
+  // Burger button (sits where the hidden nav-links were)
+  const burger = document.createElement('button');
+  burger.className = 'nav-burger';
+  burger.setAttribute('aria-label', 'Open menu');
+  burger.setAttribute('aria-expanded', 'false');
+  burger.innerHTML = '<span></span><span></span><span></span>';
+  nav.appendChild(burger);
+
+  // Dropdown menu overlay
+  const menu = document.createElement('div');
+  menu.className = 'mobile-menu';
+  menu.id = 'mobileMenu';
+  const ul = document.createElement('ul');
+  const here = location.pathname.replace(/\/index\.html$/, '/');
+  ITEMS.forEach(it=>{
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = it.href;
+    a.textContent = it.label;
+    if(it.href === here) a.setAttribute('aria-current', 'page');
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+  menu.appendChild(ul);
+  document.body.appendChild(menu);
+
+  function setOpen(open){
+    menu.classList.toggle('open', open);
+    burger.classList.toggle('is-open', open);
+    document.body.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+
+  burger.addEventListener('click', ()=> setOpen(!menu.classList.contains('open')));
+  menu.addEventListener('click', e=>{ if(e.target.closest('a')) setOpen(false); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') setOpen(false); });
+})();
