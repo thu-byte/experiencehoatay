@@ -2044,3 +2044,53 @@ footer{
 
 /* static-site additions */
 .subnav-tab{text-decoration:none;display:inline-block}
+
+
+/* ============================================================
+   MOBILE FIXES — contrast, nav, and image-row cropping
+   (appended last for override precedence)
+   ============================================================ */
+@media (max-width: 768px){
+  /* Darken muted label/secondary text tone for readability on phones */
+  :root{ --stone:#625F5C; }
+
+  /* Footer nav + copy were near-invisible (--mist #D5D3D0) */
+  .footer-links a{ color:var(--primary) !important; }
+  .footer-links a:hover{ color:var(--ink) !important; }
+  .footer-copy{ color:var(--stone) !important; }
+  .footer-word{ color:var(--deep) !important; }
+
+  /* Hero text over the video — raise contrast + legibility shadow */
+  #hero .overline, .hero-content .overline{
+    color:rgba(248,246,243,0.95) !important;
+    text-shadow:0 1px 14px rgba(0,0,0,0.55);
+  }
+  .hero-location{ color:rgba(248,246,243,0.85) !important; text-shadow:0 1px 10px rgba(0,0,0,0.55); }
+  .hero-scroll{ color:rgba(248,246,243,0.92) !important; text-shadow:0 1px 10px rgba(0,0,0,0.55); }
+
+  /* Caption text laid over project images — legible over light artwork */
+  .hotel-overlay-text{
+    color:rgba(255,255,255,0.96) !important;
+    text-shadow:0 1px 16px rgba(0,0,0,0.78), 0 0 3px rgba(0,0,0,0.55) !important;
+  }
+  /* Gentle tint behind captions (no hover on touch) so centered caption reads */
+  .hotel-card-overlay{ background:rgba(44,43,43,0.16) !important; }
+  /* Bottom-left image caption is hover-revealed on desktop — force it visible + legible on touch */
+  .curated-label{
+    opacity:1 !important; transform:none !important;
+    color:rgba(255,255,255,0.95) !important;
+    text-shadow:0 1px 14px rgba(0,0,0,0.82), 0 0 3px rgba(0,0,0,0.5) !important;
+  }
+  .curated-label::before{ background:rgba(255,255,255,0.85) !important; }
+
+  /* Stack paired/triple image rows full-width so portraits aren't cropped to slivers */
+  .img-row{ flex-direction:column !important; }
+  .img-row .is{ width:100% !important; height:auto !important; flex:1 1 auto !important; }
+  .img-row .is > div{ height:auto !important; }
+  .img-row .is img{ width:100% !important; height:auto !important; object-fit:contain !important; }
+}
+
+/* Hide the cramped top-nav links on phones (covers 430px Pro Max); footer carries nav */
+@media (max-width: 600px){
+  .nav-links{ display:none !important; }
+}
