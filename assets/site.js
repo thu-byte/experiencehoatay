@@ -18,7 +18,7 @@ const nav=document.getElementById('nav');
 
 // ── PAGE SWITCHING
 let currentPage=window.__PAGE__||'main';
-const ROUTES={"main": "/", "services": "/hotels/", "hotels": "/hotels/", "residences": "/branded-residences/", "about": "/about/", "essays": "/essays/", "essay-1": "/essays/lacquerwork-and-the-logic-of-accumulation/", "essay-3": "/essays/hmong-motifs-as-curatorial-language/", "essay-4": "/essays/layers-of-time/", "essay-5": "/essays/the-hands-we-trust/", "essay-6": "/essays/why-the-best-art-disappears/"};
+const ROUTES={"main": "/", "services": "/hotels/", "hotels": "/hotels/", "residences": "/branded-residences/", "about": "/about/", "essays": "/essays/", "essay-1": "/essays/", "essay-3": "/essays/", "essay-4": "/essays/layers-of-time/", "essay-5": "/essays/the-hands-we-trust/", "essay-6": "/essays/why-the-best-art-disappears/"};
 
 function showPage(id){
   var u=ROUTES[id];
@@ -461,36 +461,176 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 })();
 
-/* ── MOBILE NAV — hamburger menu (injected on every page) ── */
+/* ════════════════════════════════════════════════════════════════
+   REQUEST-OUR-CREDENTIALS MODAL  +  FORM-TO-EMAIL  (Formsubmit.co)
+   ════════════════════════════════════════════════════════════════
+   No account, no key, no secret: both forms POST to Formsubmit's AJAX
+   endpoint for studio@experiencehoatay.com. The FIRST submission ever
+   triggers a one-time confirmation email to that inbox — click the
+   activation link once, and every submission after that is delivered. */
 (function(){
-  var nav = document.getElementById('nav');
-  if(!nav) return;
-  var links = nav.querySelector('.nav-links');
-  if(!links) return;
-  // Build hamburger button
-  var btn = document.createElement('button');
-  btn.className = 'nav-toggle';
-  btn.type = 'button';
-  btn.setAttribute('aria-label', 'Open menu');
-  btn.setAttribute('aria-expanded', 'false');
-  btn.innerHTML = '<span></span><span></span><span></span>';
-  nav.appendChild(btn);
-  links.id = links.id || 'navLinks';
-  btn.setAttribute('aria-controls', links.id);
+  const FORM_ENDPOINT = "https://formsubmit.co/ajax/studio@experiencehoatay.com";
+  const FORMS = { credentials: FORM_ENDPOINT, artist: FORM_ENDPOINT };
 
-  function setOpen(open){
-    nav.classList.toggle('menu-open', open);
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    document.body.classList.toggle('nav-open', open);
+  // Single source for the credentials modal form, injected where a trigger exists.
+  const CRED_FORM = `
+  <div class="hoatay-modal-inner">
+    <button type="button" class="hoatay-modal-close" aria-label="Close">&times;</button>
+    <p class="overline">Working with us</p>
+    <h2 id="credTitle">Request our credentials</h2>
+    <p class="modal-sub">A short note about your project, and we'll send our studio credentials and selected work.</p>
+    <form class="hoatay-form" data-form="credentials"
+          data-subject-template="[Credentials request] {company}"
+          data-success="Thank you. We'll send our credentials within two business days.">
+      <div class="form-fields">
+        <div class="field-row">
+          <div class="field">
+            <label for="cred-name">Name <span class="req">*</span></label>
+            <input id="cred-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="cred-email">Work email <span class="req">*</span></label>
+            <input id="cred-email" name="email" type="email" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="cred-company">Company <span class="req">*</span></label>
+            <input id="cred-company" name="company" type="text" autocomplete="organization" required>
+          </div>
+          <div class="field">
+            <label for="cred-role">Role</label>
+            <input id="cred-role" name="role" type="text" autocomplete="organization-title">
+          </div>
+        </div>
+        <div class="field">
+          <label for="cred-project">Project type</label>
+          <select id="cred-project" name="project_type">
+            <option value="">Select one</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Branded residence">Branded residence</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cred-message">Message</label>
+          <textarea id="cred-message" name="message"></textarea>
+        </div>
+        <div class="consent">
+          <input id="cred-consent" name="consent" type="checkbox" value="yes" required>
+          <label for="cred-consent">I agree to HOATAY contacting me about this enquiry and storing these details for that purpose. <span class="req">*</span></label>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label>Leave this field empty<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
+        </div>
+        <input type="hidden" name="_subject" value="[Credentials request]">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <button type="submit">Send request</button>
+      </div>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>`;
+
+  // Build the dynamic subject from {field} tokens; drop a trailing " — " if empty.
+  function buildSubject(form){
+    const t = form.getAttribute('data-subject-template') || '';
+    return t.replace(/\{(\w+)\}/g, (m, key)=>{
+      const el = form.querySelector('[name="'+key+'"]');
+      return (el && el.value.trim()) ? el.value.trim() : '';
+    }).replace(/\s*[—-]\s*$/,'').trim();
   }
-  btn.addEventListener('click', function(){ setOpen(!nav.classList.contains('menu-open')); });
-  // Close when a menu link is tapped
-  links.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){ setOpen(false); });
-  });
-  // Close on Escape
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && nav.classList.contains('menu-open')) setOpen(false);
+
+  async function submitForm(form){
+    // Honeypot: a filled hidden field means a bot — pretend success, send nothing.
+    const hp = form.querySelector('.hp input');
+    const status = form.querySelector('.form-status');
+    if(hp && hp.value){
+      form.setAttribute('data-sent','true');
+      if(status){ status.className='form-status success'; status.textContent = form.getAttribute('data-success') || 'Thank you.'; }
+      return;
+    }
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+
+    const endpoint = form.getAttribute('data-endpoint');
+    const btn = form.querySelector('button[type=submit]');
+    const subjEl = form.querySelector('[name="_subject"]');
+    if(subjEl) subjEl.value = buildSubject(form) || subjEl.value;
+
+    if(!endpoint){
+      status.className='form-status error';
+      status.textContent='Form not yet connected. Please email studio@experiencehoatay.com.';
+      return;
+    }
+
+    btn.disabled = true;
+    status.className='form-status'; status.textContent='Sending…';
+    try{
+      const payload = Object.fromEntries(new FormData(form).entries());
+      const res = await fetch(endpoint, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(res.ok){
+        form.setAttribute('data-sent','true');
+        status.className='form-status success';
+        status.textContent = form.getAttribute('data-success') || 'Thank you.';
+      } else {
+        const j = await res.json().catch(()=>({}));
+        status.className='form-status error';
+        status.textContent = j.message
+          || (j.errors && j.errors.length ? j.errors.map(e=>e.message).join(', ') : '')
+          || 'Something went wrong. Please email studio@experiencehoatay.com.';
+        btn.disabled = false;
+      }
+    }catch(err){
+      status.className='form-status error';
+      status.textContent='Network error. Please email studio@experiencehoatay.com.';
+      btn.disabled = false;
+    }
+  }
+
+  function wireForm(form){
+    form.addEventListener('submit', e=>{ e.preventDefault(); submitForm(form); });
+  }
+
+  // ── Inject + wire the credentials modal if any trigger is present ──
+  const triggers = document.querySelectorAll('[data-credentials]');
+  if(triggers.length){
+    const dlg = document.createElement('dialog');
+    dlg.className = 'hoatay-modal';
+    dlg.id = 'credentialsModal';
+    dlg.setAttribute('aria-labelledby','credTitle');
+    dlg.innerHTML = CRED_FORM;
+    document.body.appendChild(dlg);
+
+    const form = dlg.querySelector('form');
+    form.setAttribute('data-endpoint', FORMS.credentials);
+    wireForm(form);
+
+    const openModal = ()=>{
+      if(typeof dlg.showModal === 'function') dlg.showModal();
+      else dlg.setAttribute('open','');
+      setTimeout(()=>{ const f=dlg.querySelector('input,select,textarea'); if(f) f.focus(); }, 40);
+    };
+    const closeModal = ()=>{ if(typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); };
+
+    triggers.forEach(t=> t.addEventListener('click', e=>{ e.preventDefault(); openModal(); }));
+    dlg.querySelector('.hoatay-modal-close').addEventListener('click', closeModal);
+    // Click outside the panel closes it
+    dlg.addEventListener('click', e=>{
+      const inner = dlg.querySelector('.hoatay-modal-inner');
+      const r = inner.getBoundingClientRect();
+      if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeModal();
+    });
+  }
+
+  // ── Wire any standalone forms on the page (e.g. the Artists page) ──
+  document.querySelectorAll('.hoatay-form').forEach(form=>{
+    if(form.closest('#credentialsModal')) return; // modal form already wired
+    if(form.getAttribute('data-form')==='artist') form.setAttribute('data-endpoint', FORMS.artist);
+    else if(!form.getAttribute('data-endpoint')) form.setAttribute('data-endpoint', FORM_ENDPOINT);
+    wireForm(form);
   });
 })();
