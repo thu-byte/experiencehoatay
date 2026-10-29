@@ -460,3 +460,37 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   })();
 
 })();
+
+/* ── MOBILE NAV — hamburger menu (injected on every page) ── */
+(function(){
+  var nav = document.getElementById('nav');
+  if(!nav) return;
+  var links = nav.querySelector('.nav-links');
+  if(!links) return;
+  // Build hamburger button
+  var btn = document.createElement('button');
+  btn.className = 'nav-toggle';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Open menu');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = '<span></span><span></span><span></span>';
+  nav.appendChild(btn);
+  links.id = links.id || 'navLinks';
+  btn.setAttribute('aria-controls', links.id);
+
+  function setOpen(open){
+    nav.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.classList.toggle('nav-open', open);
+  }
+  btn.addEventListener('click', function(){ setOpen(!nav.classList.contains('menu-open')); });
+  // Close when a menu link is tapped
+  links.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ setOpen(false); });
+  });
+  // Close on Escape
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && nav.classList.contains('menu-open')) setOpen(false);
+  });
+})();

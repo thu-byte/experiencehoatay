@@ -2090,10 +2090,7 @@ footer{
   .img-row .is img{ width:100% !important; height:auto !important; object-fit:contain !important; }
 }
 
-/* Hide the cramped top-nav links on phones (covers 430px Pro Max); footer carries nav */
-@media (max-width: 600px){
-  .nav-links{ display:none !important; }
-}
+/* (Mobile nav links are now shown via the hamburger overlay — see REFINEMENTS v3) */
 
 
 /* ============================================================
@@ -2164,4 +2161,61 @@ footer{
   .img-cap{ font-size:13px !important; }
   /* stacked image rows: each captioned figure full-width */
   .img-row.has-cap > .isf{ flex:0 0 auto !important; width:100% !important; }
+}
+
+
+/* ============================================================
+   REFINEMENTS v3 — mobile nav menu, iOS momentum, home intro
+   ============================================================ */
+
+/* iOS momentum / smoother scrolling inside the page container */
+.page{ -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
+
+/* Homepage brand intro (context + SEO for "HOATAY art consulting firm") */
+.home-intro{ max-width:860px; margin:0 auto; padding:120px 40px 128px; text-align:center; }
+.home-intro .overline{ color:var(--gold-deep); margin-bottom:26px; }
+.home-intro-headline{ font-family:var(--display); font-weight:300; font-size:clamp(28px,3.8vw,46px); color:var(--ink); line-height:1.22; margin-bottom:28px; }
+.home-intro-text{ font-size:17px; line-height:1.95; color:var(--primary); max-width:640px; margin:0 auto 36px; }
+.home-intro-link{ display:inline-block; font-family:var(--body); font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:0.5px solid var(--gold); padding-bottom:3px; transition:color .3s,border-color .3s; }
+.home-intro-link:hover{ color:var(--gold-deep); border-color:var(--gold-deep); }
+
+/* Hamburger button — hidden on desktop */
+.nav-toggle{ display:none; }
+
+@media (max-width: 600px){
+  .nav-toggle{
+    display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px;
+    width:40px; height:40px; margin:-8px -8px -8px 0; padding:0;
+    background:none; border:none; cursor:pointer; position:relative; z-index:212;
+  }
+  .nav-toggle span{ display:block; width:22px; height:1.5px; background:var(--ink); border-radius:2px;
+    transition:transform .4s var(--ease), opacity .25s; }
+  nav.menu-open .nav-toggle span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+  nav.menu-open .nav-toggle span:nth-child(2){ opacity:0; }
+  nav.menu-open .nav-toggle span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
+  .wordmark{ position:relative; z-index:212; }
+
+  /* Full-screen menu overlay */
+  .nav-links{
+    display:flex !important;
+    position:fixed; inset:0; width:100%;
+    height:100vh; height:100dvh;
+    flex-direction:column; align-items:center; justify-content:center; gap:30px;
+    background:rgba(248,246,243,0.985);
+    -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+    opacity:0; pointer-events:none; transform:translateY(-12px);
+    transition:opacity .4s var(--ease), transform .5s var(--ease);
+    z-index:208;
+  }
+  nav.menu-open .nav-links{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  .nav-links li{ opacity:0; transform:translateY(8px); transition:opacity .4s var(--ease), transform .4s var(--ease); }
+  nav.menu-open .nav-links li{ opacity:1; transform:translateY(0); }
+  nav.menu-open .nav-links li:nth-child(1){ transition-delay:.08s; }
+  nav.menu-open .nav-links li:nth-child(2){ transition-delay:.14s; }
+  nav.menu-open .nav-links li:nth-child(3){ transition-delay:.20s; }
+  .nav-links li a{ font-family:var(--display); font-size:26px !important; letter-spacing:0.04em !important; color:var(--ink) !important; }
+  .nav-links a::after{ display:none; }
+
+  body.nav-open{ overflow:hidden; }
 }
